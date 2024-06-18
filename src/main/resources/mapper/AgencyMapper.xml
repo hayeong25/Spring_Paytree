@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.api.paytree.mapper.AgencyMapper">
+    <select id="getDistributorListFilter" resultType="com.api.paytree.dto.AgencyDto.Distributor">
+        SELECT AG.agency_id AS distributor_id,
+               AG.agency_name AS distributor_name
+        FROM TB_AGENCY AG
+            LEFT JOIN TB_ACCOUNT AC
+                ON AG.account_id = AC.account_id
+        WHERE AC.status = 'LIVE'
+          AND AG.agency_type = 'A001002'
+    </select>
+    
+    <select id="getAgencyList" parameterType="com.api.paytree.dto.AgencyDto.Search" resultType="com.api.paytree.dto.AgencyDto.Agency">
+        SELECT AC.account_id,
+               AG.agency_id,
+               AG.agency_name,
+               AG.upper_agency_id,
+               AG.upper_agency_name,
+               AG.service_name,
+               AC.status,
+               AG.agency_type,
+               AC.phone_number,
+               AC.created_at
+        FROM TB_AGENCY AG
+            LEFT JOIN TB_ACCOUNT AC
+                ON AG.account_id = AC.account_id
+        WHERE TRUE
+        <if test="agencyType != null and agencyType != ''">
+            AND AG.agency_type = #{agencyType}
+        </if>
+        <if test="distributorId != null and distributorId != ''">
+            AND (AG.agency_id = #{distributorId} OR AG.upper_agency_id = #{distributorId})
+        </if>
+        <if test="status != null and status != ''">
+            AND AC.status = #{status}
+        </if>
+        <choose>
+            <when test="filter == 'accountId'">
+                AND AG.agency_id = #{keyword}
+            </when>
+            <when test="filter == 'accountName'">
+                AND AC.account_name = #{keyword}
+            </when>
+            <when test="filter == 'serviceName'">
+                AND AG.service_name = #{keyword}
+            </when>
+            <when test="filter == 'phoneNumber'">
+                AND AC.phone_number = #{keyword}
+            </when>
+        </choose>
+        ORDER BY AG.agency_type, AG.upper_agency_id DESC
+        LIMIT #{rows} OFFSET #{offset}
+    </select>
+    
+    <select id="getAgencyDetail" parameterType="String" resultType="com.api.paytree.dto.AgencyDto.AgencyDetail">
+        SELECT AG.agency_id,
+               AG.agency_name,
+               AG.agency_type,
+               AG.upper_agency_id,
+               AG.upper_agency_name,
+               AC.phone_number,
+               AC.status,
+               AC.created_at,
+               AG.business_type,
+               AG.business_number,
+               AG.business_address,
+               AG.settlement_type,
+               AG.is_withdrawal,
+               AG.service_type,
+               AG.service_name,
+               AG.sms,
+               AG.manage_virtual,
+               AG.virtual_id,
+               AG.domain,
+               AG.limit_withdrawal,
+               AG.limit_withdraw_amount,
+               AG.withdraw_fee,
+               AG.deposit_fee,
+               AG.wallet_id,
+               AG.wallet_address,
+               AG.balance
+        FROM TB_AGENCY AG
+            LEFT JOIN TB_ACCOUNT AC
+                ON AG.account_id = AC.account_id
+        WHERE AG.agency_id = #{agencyId}
+    </select>
+    
+    <select id="getBelongAgencyList" parameterType="String" resultType="com.api.paytree.dto.AgencyDto.Agency">
+        SELECT AC.account_id,
+               AG.agency_id,
+               AG.agency_name,
+               AG.upper_agency_id,
+               AG.upper_agency_name,
+               AG.service_name,
+               AC.status,
+               AG.agency_type,
+               AC.phone_number,
+               AC.created_at
+        FROM TB_AGENCY AG
+            LEFT JOIN TB_ACCOUNT AC
+                ON AG.account_id = AC.account_id
+        WHERE AG.agency_type = #{agencyType}
+        ORDER BY AG.agency_type, AG.upper_agency_id DESC
+    </select>
+
+    <insert id="insertAgency" parameterType="com.api.paytree.dto.AgencyDto.AgencyDetail">
+        INSERT INTO TB_AGENCY (
+            agency_id,
+            agency_name,
+            agency_type,
+            upper_agency_id,
+            upper_agency_name,
+            phone_number,
+            status,
+            business_type,
+            business_number,
+            business_address,
+            settlement_type,
+            is_withdrawal,
+            service_type,
+            service_name,
+            sms,
+            manage_virtual,
+            virtual_id,
+            virtual_name,
+            domain,
+            limit_withdrawal,
+            limit_withdraw_amount,
+            withdraw_fee,
+            deposit_fee,
+            wallet_id,
+            wallet_address,
+            balance,
+            api_id,
+            api_key,
+            api_ip,
+            api_count,
+            use_api,
+            callback_url,
+            created_at,
+            modified_at
+        ) VALUES (
+            #{agencyId},
+            #{agencyName},
+            #{agencyType},
+            #{upperAgencyId},
+            #{upperAgencyName},
+            #{phoneNumber},
+            #{status},
+            #{businessType},
+            #{businessNumber},
+            #{businessAddress},
+            #{settlementType},
+            #{isWithdrawal},
+            #{serviceType},
+            #{serviceName},
+            #{sms},
+            #{manageVirtual},
+            #{virtualId},
+            #{virtualName},
+            #{domain},
+            #{limitWithdrawal},
+            #{limitWithdrawAmount},
+            #{withdrawFee},
+            #{depositFee},
+            #{walletId},
+            #{walletAddress},
+            #{balance},
+            #{apiId},
+            #{apiKey},
+            #{apiIp},
+            #{apiCount},
+            #{useApi},
+            #{callbackUrl},
+            #{createdAt},
+            #{createdAt}
+        )
+    </insert>
+
+    <update id="updateAgency" parameterType="com.api.paytree.dto.AgencyDto.AgencyDetail">
+        UPDATE TB_AGENCY
+        SET agency_name = #{agencyName},
+            upper_agency_id = #{upperAgencyId},
+            upper_agency_name = #{upperAgencyName},
+            phone_number = #{phoneNumber},
+            status = #{status},
+            business_type = #{businessType},
+            business_number = #{businessNumber},
+            business_address = #{businessAddress},
+            settlement_type = #{settlementType},
+            is_withdrawal = #{isWithdrawal},
+            service_type = #{serviceType},
+            sms = #{sms},
+            manage_virtual = #{manageVirtual},
+            virtual_id = #{virtualId},
+            virtual_name = #{virtualName},
+            domain = #{domain},
+            limit_withdrawal = #{limitWithdrawal},
+            limit_withdraw_amount = #{limitWithdrawAmount},
+            withdraw_fee = #{withdrawFee},
+            deposit_fee = #{depositFee},
+            wallet_id = #{walletId},
+            wallet_address = #{walletAddress},
+            balance = #{balance},
+            api_id = #{apiId},
+            api_key = #{apiKey},
+            api_ip = #{apiIp},
+            api_count = #{apiCount},
+            use_api = #{useApi},
+            callback_url = #{callbackUrl},
+            modified_at = NOW()
+        WHERE agency_id = #{agencyId}
+    </update>
+</mapper>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.api.paytree.mapper.AccountMapper">
+    <insert id="insertAccount" parameterType="com.api.paytree.dto.AccountDto.AccountDetail">
+        INSERT INTO TB_ACCOUNT (
+            account_id,
+            account_name,
+            password,
+            status,
+            account_type,
+            phone_number,
+            create_at,
+            modified_at
+        ) VALUES (
+            #{accountId},
+            #{accountName},
+            #{password},
+            #{status},
+            #{accountType},
+            #{phoneNumber},
+            #{createdAt},
+            #{modifiedAt}
+        )
+    </insert>
+
+    <update id="updateAccount" parameterType="com.api.paytree.dto.AccountDto.AccountDetail">
+        UPDATE TB_ACCOUNT
+        SET account_name = #{accountName},
+            status = #{status},
+            phone_number = #{phoneNumber},
+            modified_at = #{modifiedAt}
+        WHERE account_id = #{accountId}
+    </update>
+</mapper>
