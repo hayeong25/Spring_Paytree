@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <setting name="callSettersOnNulls" value="true"/> <!-- 쿼리 결과 필드가 NULL일 때 출력 시 누락되지 않도록 -->
+        <setting name="jdbcTypeForNull" value="NULL"/> <!-- 쿼리 전달 파라미터 값이 NULL일 때 오류 발생 방지 -->
+    </settings>
+</configuration>
