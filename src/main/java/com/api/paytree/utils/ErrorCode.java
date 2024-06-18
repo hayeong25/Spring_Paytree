@@ -30,10 +30,12 @@ public enum ErrorCode {
     INVALID_WALLET(HttpStatus.FORBIDDEN, "C0041", "유효하지 않은 지갑입니다."),
     NOT_ENOUGH_BALANCE(HttpStatus.FORBIDDEN, "C0042", "예치금 잔액이 부족합니다."),
 
-    INVALID_TOKEN(HttpStatus.FORBIDDEN, "C1001", "유효하지 않은 토큰입니다"),
-    EXPIRED_TOKEN(HttpStatus.FORBIDDEN, "C1002", "만료된 토큰입니다"),
+    INVALID_TOKEN(HttpStatus.FORBIDDEN, "C1001", "유효하지 않은 토큰입니다."),
+    EXPIRED_TOKEN(HttpStatus.FORBIDDEN, "C1002", "만료된 토큰입니다."),
     UNAUTHORIZED_REQUEST(HttpStatus.UNAUTHORIZED, "C1003", "비정상적인 접근입니다. 로그인 후 이용해주세요."),
     FORBIDDEN_REQUEST(HttpStatus.FORBIDDEN, "C1004", "접근 권한이 없습니다."),
+
+    INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "C2001", "요청 파라미터 값을 다시 확인해주세요."),
 
     SELECT_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "D0001", "데이터 조회 실패"),
     INSERT_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "D0002", "데이터 저장 실패"),
