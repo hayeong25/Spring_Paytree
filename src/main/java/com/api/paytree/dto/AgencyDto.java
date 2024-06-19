@@ -19,8 +19,9 @@ import java.util.List;
 public class AgencyDto {
     @Getter
     @AllArgsConstructor
-    public static class Filter {
+    public static class LoadFilter {
         private List<Distributor> distributorList;
+        private List<Virtual> virtualList;
     }
 
     @Getter
@@ -29,6 +30,19 @@ public class AgencyDto {
     public static class Distributor {
         private String distributorId;
         private String distributorName;
+    }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    public static class Virtual {
+        private String virtualCode;
+        private String virtualAccount;
+        private String virtualName;
+        private boolean virtualStatus;
+        private int depositFee;
+        private LocalDateTime createdAt;
+        private LocalDateTime modifiedAt;
     }
 
     @Getter

@@ -21,10 +21,10 @@ public class AgencyController {
     @Autowired
     AgencyService agencyService;
 
-    // GET : 페이지 로딩 시 검색 필터 (총판 구분) 가져오기
+    // GET : 페이지 로딩 시 검색 필터 가져오기
     @GetMapping("/filter")
-    public ResponseEntity<Filter> getDistributorListFilter() {
-        return ResponseEntity.ok(agencyService.getDistributorListFilter());
+    public ResponseEntity<LoadFilter> getListFilter() {
+        return ResponseEntity.ok(agencyService.getListFilter());
     }
 
     // POST : 영업점 목록

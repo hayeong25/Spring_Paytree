@@ -9,6 +9,8 @@ import java.util.List;
 public interface AgencyMapper {
     List<Distributor> getDistributorListFilter();
 
+    List<Virtual> getVirtualListFilter();
+
     List<Agency> getAgencyList(Search search);
 
     AgencyDetail getAgencyDetail(String agencyId);

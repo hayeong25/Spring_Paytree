@@ -10,6 +10,17 @@
         WHERE AC.status = 'LIVE'
           AND AG.agency_type = 'A001002'
     </select>
+
+    <select id="getVirtualListFilter" resultType="com.api.paytree.dto.AgencyDto.Virtual">
+        SELECT VW.virtual_code,
+               VW.virtual_account,
+               VW.virtual_name,
+               VW.virtual_status,
+               VW.deposit_fee,
+               VW.created_at,
+               VW.modified_at
+        FROM TB_VIRTUAL_WALLET VW
+    </select>
     
     <select id="getAgencyList" parameterType="com.api.paytree.dto.AgencyDto.Search" resultType="com.api.paytree.dto.AgencyDto.Agency">
         SELECT AC.account_id,

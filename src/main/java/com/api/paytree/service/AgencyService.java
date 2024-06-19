@@ -24,17 +24,21 @@ public class AgencyService {
     @Autowired
     AgencyMapper agencyMapper;
 
-    public Filter getDistributorListFilter() {
+    public LoadFilter getListFilter() {
         List<Distributor> distributorList;
+        List<Virtual> virtualList;
 
         try {
             distributorList = Optional.of(agencyMapper.getDistributorListFilter())
                                       .orElseThrow(() -> new ClientException(ErrorCode.SELECT_FAIL));
+
+            virtualList = Optional.of(agencyMapper.getVirtualListFilter())
+                                  .orElseThrow(() -> new ClientException(ErrorCode.SELECT_FAIL));
         } catch (Exception e) {
             throw new ClientException(ErrorCode.SERVER_ERROR);
         }
 
-        return new Filter(distributorList);
+        return new LoadFilter(distributorList, virtualList);
     }
 
     public AgencyList getAgencyList(Search search) {
