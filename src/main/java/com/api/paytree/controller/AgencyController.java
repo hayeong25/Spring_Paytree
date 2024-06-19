@@ -58,4 +58,24 @@ public class AgencyController {
     }
 
     // POST : 영업점 목록 엑셀 다운로드
+
+    // POST : 영업점 지갑 목록
+    @PostMapping("/walletList")
+    public ResponseEntity<WalletList> getAgencyWalletList(Search search) {
+        return ResponseEntity.ok(agencyService.getAgencyWalletList(search));
+    }
+
+    // POST : 지갑 송금
+    @PostMapping("/send")
+    public ResponseEntity<SendWallet> sendToAgencyWallet(@RequestBody @Valid SendWallet sendInfo) {
+        return ResponseEntity.ok(agencyService.sendToAgencyWallet(sendInfo));
+    }
+
+    // POST : 잔고 회수
+    @PostMapping("/return")
+    public ResponseEntity<SendWallet> returnToAdminWallet(@RequestBody @Valid SendWallet sendInfo) {
+        return ResponseEntity.ok(agencyService.returnToAdminWallet(sendInfo));
+    }
+
+    // POST : 영업점 지갑 목록 엑셀 다운로드
 }

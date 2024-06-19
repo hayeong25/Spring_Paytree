@@ -1,9 +1,6 @@
 package com.api.paytree.dto;
 
-import com.api.paytree.utils.AccountStatus;
-import com.api.paytree.utils.BusinessType;
-import com.api.paytree.utils.ServiceType;
-import com.api.paytree.utils.SettlementType;
+import com.api.paytree.utils.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -21,7 +18,7 @@ public class AgencyDto {
     @AllArgsConstructor
     public static class LoadFilter {
         private List<Distributor> distributorList;
-        private List<Virtual> virtualList;
+        private Virtual virtualWallet;
     }
 
     @Getter
@@ -36,11 +33,13 @@ public class AgencyDto {
     @Builder
     @AllArgsConstructor
     public static class Virtual {
+        private String virtualId;
         private String virtualCode;
-        private String virtualAccount;
         private String virtualName;
+        private String virtualAccount;
         private boolean virtualStatus;
-        private int depositFee;
+        private BigDecimal depositFee;
+        private int balance;
         private LocalDateTime createdAt;
         private LocalDateTime modifiedAt;
     }
@@ -51,6 +50,8 @@ public class AgencyDto {
         private String agencyType; // 영업단 구분 : 총판, 대리점
         private String distributorId; // 충판 구분
         private AccountStatus status;
+        private String virtualId;
+        private boolean virtualStatus;
         private String filter; // accountId, accountName, serviceName, phoneNumber
         private String keyword;
         @Min(1)
@@ -81,6 +82,12 @@ public class AgencyDto {
         private String phoneNumber;
         private LocalDateTime createdAt;
         private LocalDateTime modifiedAt;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class WalletList {
+        List<AgencyDetail> agencyWalletList;
     }
 
     @Getter
@@ -140,5 +147,37 @@ public class AgencyDto {
         private int apiCount;
         private boolean useApi;
         private String callbackUrl;
+    }
+
+    @Getter
+    @Setter
+    public static class SendWallet {
+        @NotBlank
+        private String sendAccountId;
+        @NotBlank
+        private String receiveAccountId;
+        @Min(1)
+        private int sendAmount;
+        private String memo;
+    }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    public static class WalletHistory {
+        private String historyNo;
+        private String upperAgencyName;
+        private String agencyType;
+        private String agencyId;
+        private String agencyName;
+        private String virtualName;
+        private int sendType; // 수동 입금, 내부 전송, 가상계좌, 은행 바로 출금
+        private String historyType; // 입출금 구분
+        private String approvalStatus;
+        private int amount;
+        private int wireTransferFee;
+        private String memo;
+        private String tid;
+        private LocalDateTime createdAt;
     }
 }

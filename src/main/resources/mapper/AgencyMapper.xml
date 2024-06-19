@@ -11,12 +11,14 @@
           AND AG.agency_type = 'A001002'
     </select>
 
-    <select id="getVirtualListFilter" resultType="com.api.paytree.dto.AgencyDto.Virtual">
-        SELECT VW.virtual_code,
-               VW.virtual_account,
+    <select id="getVirtualWalletFilter" resultType="com.api.paytree.dto.AgencyDto.Virtual">
+        SELECT VW.virtual_id,
+               VW.virtual_code,
                VW.virtual_name,
+               VW.virtual_account,
                VW.virtual_status,
                VW.deposit_fee,
+               VW.balance,
                VW.created_at,
                VW.modified_at
         FROM TB_VIRTUAL_WALLET VW
@@ -223,4 +225,94 @@
             modified_at = NOW()
         WHERE agency_id = #{agencyId}
     </update>
+
+    <select id="getAgencyWalletList" parameterType="com.api.paytree.dto.AgencyDto.Search" resultType="com.api.paytree.dto.AgencyDto.AgencyDetail">
+        SELECT AG.agency_id,
+               AG.agency_name,
+               AG.agency_type,
+               AG.upper_agency_id,
+               AG.upper_agency_name,
+               VW.virtual_id,
+               VW.virtual_name,
+               AG.wallet_address,
+               AG.balance
+        FROM TB_AGENCY AG
+            LEFT JOIN TB_ACCOUNT AC
+                ON AG.agency_id = AC.account_id
+            LEFT JOIN TB_VIRTUAL_WALLET VW
+                ON AG.virtual_id = VW.virtual_id
+        WHERE TRUE
+        <if test="agencyType != null and agencyType != ''">
+            AND AG.agency_type = #{agencyType}
+        </if>
+        <if test="distributorId != null and distributorId != ''">
+            AND AG.agency_id = #{distributorId}
+        </if>
+        <if test="virtualId != null and virtualId != ''">
+            AND VW.virtual_id = #{virtualId}
+        </if>
+        <if test="virtualStatus != null and virtualStatus != ''">
+            AND VW.virtual_status = #{virtualStatus}
+        </if>
+        <choose>
+            <when test="filter == 'accountId'">
+                AND AG.agency_id = #{keyword}
+            </when>
+            <when test="filter == 'accountName'">
+                AND AC.account_name = #{keyword}
+            </when>
+        </choose>
+        ORDER BY AG.agency_type, AG.upper_agency_id DESC
+        LIMIT #{rows} OFFSET #{offset}
+    </select>
+
+    <select id="getAdminBalance" resultType="Integer">
+        SELECT VW.balance
+        FROM TB_VIRTUAL_WALLET VW
+    </select>
+
+    <update id="updateAdminBalance">
+        UPDATE TB_VIRTUAL_WALLET
+        SET balance = #{amount},
+            modified_at = NOW()
+    </update>
+
+    <update id="updateAgencyBalance">
+        UPDATE TB_AGENCY
+        SET balance = #{amount},
+            modified_at = NOW()
+        WHERE agency_id = #{agencyId}
+    </update>
+
+    <insert id="insertWalletHistory">
+        INSERT INTO TB_VIRTUAL_WALLET_HISTORY (
+            upper_agency_name,
+            agency_type,
+            agency_id,
+            agency_name,
+            virtual_name,
+            send_type,
+            history_type,
+            approval_status,
+            amount,
+            wire_transfer_fee,
+            memo,
+            tid,
+            created_at
+        ) VALUES (
+            #{upperAgencyName},
+            #{agencyType},
+            #{agencyId},
+            #{agencyName},
+            #{virtualName},
+            #{sendType},
+            #{historyType},
+            #{approvalStatus},
+            #{amount},
+            #{wireTransferFee},
+            #{memo},
+            #{tid},
+            #{createdAt}
+        )
+    </insert>
 </mapper>

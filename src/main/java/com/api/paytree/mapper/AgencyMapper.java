@@ -9,7 +9,7 @@ import java.util.List;
 public interface AgencyMapper {
     List<Distributor> getDistributorListFilter();
 
-    List<Virtual> getVirtualListFilter();
+    Virtual getVirtualWalletFilter();
 
     List<Agency> getAgencyList(Search search);
 
@@ -20,4 +20,14 @@ public interface AgencyMapper {
     List<Agency> getBelongAgencyList(String code);
 
     int updateAgency(AgencyDetail agencyDetail);
+
+    List<AgencyDetail> getAgencyWalletList(Search search);
+
+    int getAdminBalance();
+
+    int updateAdminBalance(int amount);
+
+    int updateAgencyBalance(String agencyId, int amount);
+
+    int insertWalletHistory(WalletHistory history);
 }
