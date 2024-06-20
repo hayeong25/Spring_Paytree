@@ -2,7 +2,6 @@ package com.api.paytree.controller;
 
 import com.api.paytree.dto.AgencyDto.*;
 import com.api.paytree.service.AgencyService;
-import com.api.paytree.utils.Role;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +40,7 @@ public class AgencyController {
 
     // GET : 소속 영업점 조회
     @GetMapping("/belongAgency")
-    public ResponseEntity<AgencyList> getBelongAgencyList(@RequestParam Role agencyType) {
+    public ResponseEntity<AgencyList> getBelongAgencyList(@RequestParam String agencyType) {
         return ResponseEntity.ok(agencyService.getBelongAgencyList(agencyType));
     }
 

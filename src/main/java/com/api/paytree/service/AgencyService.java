@@ -15,6 +15,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
+import static com.api.paytree.utils.Role.getRoleByCode;
+
 @Service
 public class AgencyService {
     @Autowired
@@ -74,15 +76,14 @@ public class AgencyService {
         return agencyDetail;
     }
 
-    public AgencyList getBelongAgencyList(Role agencyType) {
+    public AgencyList getBelongAgencyList(String agencyType) {
         List<Agency> agencyList;
 
         try {
-            if (agencyType == Role.DISTRIBUTOR || agencyType == Role.AGENCY) {
-                agencyList = Optional.of(agencyMapper.getBelongAgencyList(agencyType.getCode()))
-                                     .orElseThrow(() -> new ClientException(ErrorCode.SELECT_FAIL));
-            } else {
-                throw new ClientException(ErrorCode.INVALID_PARAMETER);
+            switch (getRoleByCode(agencyType)) {
+                case DISTRIBUTOR, AGENCY -> agencyList = Optional.of(agencyMapper.getBelongAgencyList(agencyType))
+                                                                 .orElseThrow(() -> new ClientException(ErrorCode.SELECT_FAIL));
+                default -> throw new ClientException(ErrorCode.INVALID_PARAMETER);
             }
         } catch (Exception e) {
             throw new ClientException(ErrorCode.SERVER_ERROR);
