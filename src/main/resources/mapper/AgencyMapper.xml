@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.api.paytree.mapper.AgencyMapper">
-    <select id="getDistributorListFilter" resultType="com.api.paytree.dto.AgencyDto.Distributor">
+    <select id="getDistributorListFilter" resultType="com.api.paytree.dto.AgencyDto$Distributor">
         SELECT AG.agency_id AS distributor_id,
                AG.agency_name AS distributor_name
         FROM TB_AGENCY AG
@@ -11,7 +11,7 @@
           AND AG.agency_type = 'A001002'
     </select>
 
-    <select id="getVirtualWalletFilter" resultType="com.api.paytree.dto.AgencyDto.Virtual">
+    <select id="getVirtualWalletFilter" resultType="com.api.paytree.dto.AgencyDto$Virtual">
         SELECT VW.virtual_id,
                VW.virtual_code,
                VW.virtual_name,
@@ -24,7 +24,7 @@
         FROM TB_VIRTUAL_WALLET VW
     </select>
     
-    <select id="getAgencyList" parameterType="com.api.paytree.dto.AgencyDto.Search" resultType="com.api.paytree.dto.AgencyDto.Agency">
+    <select id="getAgencyList" parameterType="com.api.paytree.dto.AgencyDto$Search" resultType="com.api.paytree.dto.AgencyDto$Agency">
         SELECT AC.account_id,
                AG.agency_id,
                AG.agency_name,
@@ -66,7 +66,7 @@
         LIMIT #{rows} OFFSET #{offset}
     </select>
     
-    <select id="getAgencyDetail" parameterType="String" resultType="com.api.paytree.dto.AgencyDto.AgencyDetail">
+    <select id="getAgencyDetail" parameterType="String" resultType="com.api.paytree.dto.AgencyDto$AgencyDetail">
         SELECT AG.agency_id,
                AG.agency_name,
                AG.agency_type,
@@ -99,7 +99,7 @@
         WHERE AG.agency_id = #{agencyId}
     </select>
     
-    <select id="getBelongAgencyList" parameterType="String" resultType="com.api.paytree.dto.AgencyDto.Agency">
+    <select id="getBelongAgencyList" parameterType="String" resultType="com.api.paytree.dto.AgencyDto$Agency">
         SELECT AC.account_id,
                AG.agency_id,
                AG.agency_name,
@@ -117,7 +117,7 @@
         ORDER BY AG.agency_type, AG.upper_agency_id DESC
     </select>
 
-    <insert id="insertAgency" parameterType="com.api.paytree.dto.AgencyDto.AgencyDetail">
+    <insert id="insertAgency" parameterType="com.api.paytree.dto.AgencyDto$AgencyDetail">
         INSERT INTO TB_AGENCY (
             agency_id,
             agency_name,
@@ -191,7 +191,7 @@
         )
     </insert>
 
-    <update id="updateAgency" parameterType="com.api.paytree.dto.AgencyDto.AgencyDetail">
+    <update id="updateAgency" parameterType="com.api.paytree.dto.AgencyDto$AgencyDetail">
         UPDATE TB_AGENCY
         SET agency_name = #{agencyName},
             upper_agency_id = #{upperAgencyId},
@@ -226,7 +226,7 @@
         WHERE agency_id = #{agencyId}
     </update>
 
-    <select id="getAgencyWalletList" parameterType="com.api.paytree.dto.AgencyDto.Search" resultType="com.api.paytree.dto.AgencyDto.AgencyDetail">
+    <select id="getAgencyWalletList" parameterType="com.api.paytree.dto.AgencyDto$Search" resultType="com.api.paytree.dto.AgencyDto$AgencyDetail">
         SELECT AG.agency_id,
                AG.agency_name,
                AG.agency_type,
@@ -315,4 +315,62 @@
             #{createdAt}
         )
     </insert>
+
+    <select id="getWalletHistoryList" parameterType="com.api.paytree.dto.AgencyDto$Search" resultType="com.api.paytree.dto.AgencyDto$WalletHistory">
+        SELECT upper_agency_name,
+               agency_type,
+               agency_id,
+               agency_name,
+               virtual_name,
+               send_type,
+               history_type,
+               approval_status,
+               amount,
+               wire_transfer_fee,
+               memo,
+               tid,
+               created_at
+        FROM TB_VIRTUAL_WALLET_HISTORY
+        WHERE TRUE
+        <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+            AND created_at BETWEEN #{startDate} AND #{endDate}
+        </if>
+        <if test="sendType != null and sendType != ''">
+            AND send_type = #{sendType}
+        </if>
+        <if test="historyType != null and historyType != ''">
+            AND history_type = #{historyType}
+        </if>
+        <if test="approvalStatus != null and approvalStatus != ''">
+            AND approval_status = #{approvalStatus}
+        </if>
+        <choose>
+            <when test="filter == 'accountId'">
+                AND agency_id = #{keyword}
+            </when>
+            <when test="filter == 'accountName'">
+                AND account_name = #{keyword}
+            </when>
+        </choose>
+        ORDER BY history_no DESC
+        LIMIT #{rows} OFFSET #{offset}
+    </select>
+
+    <select id="getWalletHistoryDetail" resultType="com.api.paytree.dto.AgencyDto$WalletHistory">
+        SELECT upper_agency_name,
+               agency_type,
+               agency_id,
+               agency_name,
+               virtual_name,
+               send_type,
+               history_type,
+               approval_status,
+               amount,
+               wire_transfer_fee,
+               memo,
+               tid,
+               created_at
+        FROM TB_VIRTUAL_WALLET_HISTORY
+        WHERE history_no = #{historyNo}
+    </select>
 </mapper>

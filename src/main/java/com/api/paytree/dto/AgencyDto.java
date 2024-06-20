@@ -52,6 +52,11 @@ public class AgencyDto {
         private AccountStatus status;
         private String virtualId;
         private boolean virtualStatus;
+        private String startDate;
+        private String endDate;
+        private SendType sendType;
+        private HistoryType historyType;
+        private String approvalStatus; // 대기, 완료, 오류, 실패, 취소
         private String filter; // accountId, accountName, serviceName, phoneNumber
         private String keyword;
         @Min(1)
@@ -159,6 +164,12 @@ public class AgencyDto {
         @Min(1)
         private int sendAmount;
         private String memo;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class HistoryList {
+        List<WalletHistory> historyList;
     }
 
     @Getter

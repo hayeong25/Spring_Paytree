@@ -271,6 +271,34 @@ public class AgencyService {
         return sendInfo;
     }
 
+    public HistoryList getWalletHistoryList(Search search) {
+        List<WalletHistory> historyList;
+
+        try {
+            search.setOffset(calculateOffset(search.getPage(), search.getRows()));
+
+            historyList = Optional.ofNullable(agencyMapper.getWalletHistoryList(search))
+                                  .orElseThrow(() -> new ClientException(ErrorCode.SELECT_FAIL));
+        } catch (Exception e) {
+            throw new ClientException(ErrorCode.SERVER_ERROR);
+        }
+
+        return new HistoryList(historyList);
+    }
+
+    public WalletHistory getWalletHistoryDetail(String historyNo) {
+        WalletHistory historyDetail;
+
+        try {
+            historyDetail = Optional.of(agencyMapper.getWalletHistoryDetail(historyNo))
+                                    .orElseThrow(() -> new ClientException(ErrorCode.INVALID_PARAMETER));
+        } catch (Exception e) {
+            throw new ClientException(ErrorCode.SERVER_ERROR);
+        }
+
+        return historyDetail;
+    }
+
     private void updateAdminBalance(int amount) {
         checkUpdateResult(agencyMapper.updateAdminBalance(amount));
     }

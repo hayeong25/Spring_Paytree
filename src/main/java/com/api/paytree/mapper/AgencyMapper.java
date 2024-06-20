@@ -30,4 +30,8 @@ public interface AgencyMapper {
     int updateAgencyBalance(String agencyId, int amount);
 
     int insertWalletHistory(WalletHistory history);
+
+    List<WalletHistory> getWalletHistoryList(Search search);
+
+    WalletHistory getWalletHistoryDetail(String historyNo);
 }
