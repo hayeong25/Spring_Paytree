@@ -49,7 +49,7 @@ public class AgencyDto {
     public static class Search {
         private String agencyType; // 영업단 구분 : 총판, 대리점
         private String distributorId; // 충판 구분
-        private AccountStatus status;
+        private int status;
         private String virtualId;
         private boolean virtualStatus;
         private String startDate;
@@ -82,7 +82,7 @@ public class AgencyDto {
         private String upperAgencyId;
         private String upperAgencyName;
         private String serviceName;
-        private AccountStatus status;
+        private int status;
         private String agencyType;
         private String phoneNumber;
         private LocalDateTime createdAt;
@@ -112,7 +112,7 @@ public class AgencyDto {
         @NotBlank
         private String phoneNumber;
         @NotNull
-        private AccountStatus status;
+        private int status;
         @NotNull
         private LocalDateTime createdAt;
 

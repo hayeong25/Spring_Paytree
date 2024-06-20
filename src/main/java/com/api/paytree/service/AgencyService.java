@@ -98,7 +98,7 @@ public class AgencyService {
                                                        .accountId(agencyDetail.getAgencyId())
                                                        .accountName(agencyDetail.getAgencyName())
                                                        .password(null)
-                                                       .status(AccountStatus.WAIT)
+                                                       .status(AccountStatus.WAIT.getCode())
                                                        .accountType(agencyDetail.getAgencyType())
                                                        .phoneNumber(agencyDetail.getPhoneNumber())
                                                        .createdAt(LocalDateTime.now())

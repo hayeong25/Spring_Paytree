@@ -1,6 +1,5 @@
 package com.api.paytree.dto;
 
-import com.api.paytree.utils.AccountStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,7 +14,7 @@ public class AccountDto {
         private String accountId;
         private String accountName;
         private String password;
-        private AccountStatus status;
+        private int status;
         private String accountType;
         private String phoneNumber;
         private LocalDateTime createdAt;
