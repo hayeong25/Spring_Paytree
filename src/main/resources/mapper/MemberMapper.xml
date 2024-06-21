@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.api.paytree.mapper.MemberMapper">
+    <select id="getMemberList" parameterType="com.api.paytree.dto.MemberDto$Search" resultType="com.api.paytree.dto.MemberDto$Member">
+        SELECT member_id,
+               member_name,
+               member_type,
+               agency_id,
+               agency_name,
+               upper_agency_id,
+               upper_agency_name,
+               phone_number,
+               status,
+               social_status,
+               created_at
+        FROM TB_MEMBER
+        WHERE TRUE
+        <if test="upperAgencyId != null and upperAgencyId != ''">
+            AND upper_agency_id = #{upperAgencyId}
+        </if>
+        <if test="agencyId != null and agencyId != ''">
+            AND agency_id = #{agencyId}
+        </if>
+        <if test="status != null and status != ''">
+            AND status = #{status}
+        </if>
+        <choose>
+            <when test="filter == 'memberId'">
+                AND member_id = #{memberId}
+            </when>
+            <when test="filter == 'memberName'">
+                AND member_name = #{memberName}
+            </when>
+            <when test="filter == 'phoneNumber'">
+                AND phone_number = #{phoneNumber}
+            </when>
+        </choose>
+        ORDER BY created_at DESC
+        LIMIT #{rows} OFFSET #{offset}
+    </select>
+
+    <select id="getMemberByMemberId" parameterType="String" resultType="com.api.paytree.dto.MemberDto$Member">
+        SELECT member_id,
+               member_name,
+               member_type,
+               agency_id,
+               agency_name,
+               upper_agency_id,
+               upper_agency_name,
+               phone_number,
+               birth,
+               status,
+               bank_name,
+               account_number,
+               account_holder,
+               virtual_account,
+               balance,
+               social_status,
+               address,
+               created_at
+        FROM TB_MEMBER
+        WHERE member_id = #{memberId}
+    </select>
+
+    <select id="getMemberWalletHistoryByMemberId" parameterType="String" resultType="com.api.paytree.dto.MemberDto$WalletHistory">
+        SELECT history_type,
+        amount,
+        created_at
+        FROM TB_VIRTUAL_WALLET_HISTORY
+        WHERE member_id = #{memberId}
+    </select>
+
+    <select id="getMemberHistory" parameterType="String" resultType="com.api.paytree.dto.MemberDto$MemberHistory">
+        SELECT member_id,
+               member_type,
+               history,
+               history_type,
+               created_at
+        FROM TB_MEMBER_HISTORY
+        WHERE member_id = #{memberId}
+    </select>
+
+    <update id="updateMember">
+        UPDATE TB_MEMBER
+        SET member_name = #{memberName},
+            agency_id = #{agencyId},
+            agency_name = #{agencyName},
+            upper_agency_id = #{upperAgencyId},
+            upper_agency_name = #{upperAgencyName},
+            phone_number = #{phoneNumber},
+            birth = #{birth},
+            status = #{status},
+            address = #{address},
+            modified_at = #{modifiedAt}
+        WHERE member_id = #{memberId}
+    </update>
+
+    <insert id="insertMemberHistory" parameterType="com.api.paytree.dto.MemberDto$MemberHistory">
+        INSERT INTO TB_MEMBER_HISTORY (
+            member_id,
+            member_type,
+            history,
+            history_type,
+            created_at
+        ) VALUES (
+            #{memberId},
+            #{memberType},
+            #{history},
+            #{historyType},
+            #{createdAt}
+        )
+    </insert>
+</mapper>
