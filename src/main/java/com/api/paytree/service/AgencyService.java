@@ -185,7 +185,7 @@ public class AgencyService {
                                                       .createdAt(LocalDateTime.now())
                                                       .build();
 
-            Helper.insertWalletHistory(adminHistory);
+            Helper.insertAgencyWalletHistory(adminHistory);
 
             WalletHistory agencyHistory = WalletHistory.builder()
                                                       .upperAgencyName(agencyDetail.getUpperAgencyName())
@@ -203,7 +203,7 @@ public class AgencyService {
                                                       .createdAt(LocalDateTime.now())
                                                       .build();
 
-            Helper.insertWalletHistory(agencyHistory);
+            Helper.insertAgencyWalletHistory(agencyHistory);
         } catch (Exception e) {
             throw new ClientException(ErrorCode.SERVER_ERROR);
         }
@@ -246,7 +246,7 @@ public class AgencyService {
                                                        .createdAt(LocalDateTime.now())
                                                        .build();
 
-            Helper.insertWalletHistory(agencyHistory);
+            Helper.insertAgencyWalletHistory(agencyHistory);
 
             WalletHistory adminHistory = WalletHistory.builder()
                                                       .upperAgencyName(COMPANY)
@@ -264,7 +264,7 @@ public class AgencyService {
                                                       .createdAt(LocalDateTime.now())
                                                       .build();
 
-            Helper.insertWalletHistory(adminHistory);
+            Helper.insertAgencyWalletHistory(adminHistory);
         } catch (Exception e) {
             throw new ClientException(ErrorCode.SERVER_ERROR);
         }

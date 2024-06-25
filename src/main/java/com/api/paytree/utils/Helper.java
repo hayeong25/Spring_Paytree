@@ -21,8 +21,8 @@ public class Helper {
         checkUpdateResult(memberMapper.updateMemberBalance(memberId, amount));
     }
 
-    public static void insertWalletHistory(AgencyDto.WalletHistory history) {
-        checkInsertResult(agencyMapper.insertWalletHistory(history));
+    public static void insertAgencyWalletHistory(AgencyDto.WalletHistory history) {
+        checkInsertResult(agencyMapper.insertAgencyWalletHistory(history));
     }
 
     public static void checkInsertResult(int result) {

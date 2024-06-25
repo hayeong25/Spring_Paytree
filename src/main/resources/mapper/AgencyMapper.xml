@@ -284,7 +284,7 @@
         WHERE agency_id = #{agencyId}
     </update>
 
-    <insert id="insertWalletHistory">
+    <insert id="insertAgencyWalletHistory">
         INSERT INTO TB_VIRTUAL_WALLET_HISTORY (
             upper_agency_name,
             agency_type,
