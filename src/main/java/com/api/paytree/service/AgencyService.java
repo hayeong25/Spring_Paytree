@@ -52,7 +52,7 @@ public class AgencyService {
         List<Agency> agencyList;
 
         try {
-            search.setOffset(calculateOffset(search.getPage(), search.getRows()));
+            search.setOffset(Helper.calculateOffset(search.getPage(), search.getRows()));
 
             agencyList = Optional.of(agencyMapper.getAgencyList(search))
                                  .orElseThrow(() -> new ClientException(ErrorCode.SELECT_FAIL));
@@ -106,8 +106,8 @@ public class AgencyService {
                                                        .modifiedAt(LocalDateTime.now())
                                                        .build();
 
-            checkInsertResult(accountMapper.insertAccount(accountDetail));
-            checkInsertResult(agencyMapper.insertAgency(agencyDetail));
+            Helper.checkInsertResult(accountMapper.insertAccount(accountDetail));
+            Helper.checkInsertResult(agencyMapper.insertAgency(agencyDetail));
         } catch (Exception e) {
             throw new ClientException(ErrorCode.SERVER_ERROR);
         }
@@ -125,8 +125,8 @@ public class AgencyService {
                                                        .modifiedAt(LocalDateTime.now())
                                                        .build();
 
-            checkUpdateResult(accountMapper.updateAccount(accountDetail));
-            checkUpdateResult(agencyMapper.updateAgency(agencyDetail));
+            Helper.checkUpdateResult(accountMapper.updateAccount(accountDetail));
+            Helper.checkUpdateResult(agencyMapper.updateAgency(agencyDetail));
         } catch (Exception e) {
             throw new ClientException(ErrorCode.SERVER_ERROR);
         }
@@ -138,7 +138,7 @@ public class AgencyService {
         List<AgencyDetail> agencyWalletList;
 
         try {
-            search.setOffset(calculateOffset(search.getPage(), search.getRows()));
+            search.setOffset(Helper.calculateOffset(search.getPage(), search.getRows()));
 
             agencyWalletList = Optional.of(agencyMapper.getAgencyWalletList(search))
                                        .orElseThrow(() -> new ClientException(ErrorCode.SELECT_FAIL));
@@ -163,10 +163,10 @@ public class AgencyService {
                                                 .orElseThrow(() -> new ClientException(ErrorCode.NOT_FOUNDED_AGENCY));
 
             // 본사 잔고 차감
-            updateAdminBalance(validBalance - sendInfo.getSendAmount());
+            Helper.updateAdminBalance(validBalance - sendInfo.getSendAmount());
 
             // 영업점 잔액 업데이트
-            updateAgencyBalance(sendInfo.getReceiveAccountId(), agencyDetail.getBalance() + sendInfo.getSendAmount());
+            Helper.updateAgencyBalance(sendInfo.getReceiveAccountId(), agencyDetail.getBalance() + sendInfo.getSendAmount());
             
             // 지갑 히스토리 추가
             WalletHistory adminHistory = WalletHistory.builder()
@@ -185,7 +185,7 @@ public class AgencyService {
                                                       .createdAt(LocalDateTime.now())
                                                       .build();
 
-            insertWalletHistory(adminHistory);
+            Helper.insertWalletHistory(adminHistory);
 
             WalletHistory agencyHistory = WalletHistory.builder()
                                                       .upperAgencyName(agencyDetail.getUpperAgencyName())
@@ -203,7 +203,7 @@ public class AgencyService {
                                                       .createdAt(LocalDateTime.now())
                                                       .build();
 
-            insertWalletHistory(agencyHistory);
+            Helper.insertWalletHistory(agencyHistory);
         } catch (Exception e) {
             throw new ClientException(ErrorCode.SERVER_ERROR);
         }
@@ -224,10 +224,10 @@ public class AgencyService {
                                        .orElseThrow(() -> new ClientException(ErrorCode.SELECT_FAIL));
 
             // 영업점 잔고 차감
-            updateAgencyBalance(sendInfo.getReceiveAccountId(), agencyDetail.getBalance() - sendInfo.getSendAmount());
+            Helper.updateAgencyBalance(sendInfo.getReceiveAccountId(), agencyDetail.getBalance() - sendInfo.getSendAmount());
 
             // 본사 잔고 업데이트
-            updateAdminBalance(validBalance + sendInfo.getSendAmount());
+            Helper.updateAdminBalance(validBalance + sendInfo.getSendAmount());
 
             // 지갑 히스토리 추가
             WalletHistory agencyHistory = WalletHistory.builder()
@@ -246,7 +246,7 @@ public class AgencyService {
                                                        .createdAt(LocalDateTime.now())
                                                        .build();
 
-            insertWalletHistory(agencyHistory);
+            Helper.insertWalletHistory(agencyHistory);
 
             WalletHistory adminHistory = WalletHistory.builder()
                                                       .upperAgencyName(COMPANY)
@@ -264,7 +264,7 @@ public class AgencyService {
                                                       .createdAt(LocalDateTime.now())
                                                       .build();
 
-            insertWalletHistory(adminHistory);
+            Helper.insertWalletHistory(adminHistory);
         } catch (Exception e) {
             throw new ClientException(ErrorCode.SERVER_ERROR);
         }
@@ -276,7 +276,7 @@ public class AgencyService {
         List<WalletHistory> historyList;
 
         try {
-            search.setOffset(calculateOffset(search.getPage(), search.getRows()));
+            search.setOffset(Helper.calculateOffset(search.getPage(), search.getRows()));
 
             historyList = Optional.ofNullable(agencyMapper.getWalletHistoryList(search))
                                   .orElseThrow(() -> new ClientException(ErrorCode.SELECT_FAIL));
@@ -298,33 +298,5 @@ public class AgencyService {
         }
 
         return historyDetail;
-    }
-
-    private void updateAdminBalance(int amount) {
-        checkUpdateResult(agencyMapper.updateAdminBalance(amount));
-    }
-
-    private void updateAgencyBalance(String agencyId, int amount) {
-        checkUpdateResult(agencyMapper.updateAgencyBalance(agencyId, amount));
-    }
-
-    private void insertWalletHistory(WalletHistory history) {
-        checkInsertResult(agencyMapper.insertWalletHistory(history));
-    }
-
-    private int calculateOffset(int page, int rows) {
-        return page * rows - rows;
-    }
-
-    private void checkInsertResult(int result) {
-        if (result < 1) {
-            throw new ClientException(ErrorCode.INSERT_FAIL);
-        }
-    }
-
-    private void checkUpdateResult(int result) {
-        if (result < 1) {
-            throw new ClientException(ErrorCode.UPDATE_FAIL);
-        }
     }
 }
