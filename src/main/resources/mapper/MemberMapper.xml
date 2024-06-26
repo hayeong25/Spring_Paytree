@@ -110,4 +110,71 @@
             #{createdAt}
         )
     </insert>
+
+    <select id="getMemberWalletList" parameterType="com.api.paytree.dto.MemberDto$Search" resultType="com.api.paytree.dto.MemberDto$Member">
+        SELECT  member_id,
+                member_name,
+                member_type,
+                agency_id,
+                agency_name,
+                upper_agency_id,
+                upper_agency_name,
+                phone_number,
+                birth,
+                status,
+                bank_name,
+                account_number,
+                account_holder,
+                virtual_id,
+                virtual_name,
+                virtual_account,
+                balance,
+                social_status,
+                address,
+                created_at
+        FROM TB_MEMBER
+    </select>
+
+    <update id="updateMemberBalance">
+        UPDATE TB_MEMBER
+        SET balance = #{amount},
+            modified_at = NOW()
+        WHERE member_id = #{memberId}
+    </update>
+
+    <insert id="insertMemberWalletHistory">
+        INSERT INTO TB_VIRTUAL_WALLET_HISTORY (
+            upper_agency_name,
+            agency_type,
+            agency_id,
+            agency_name,
+            member_id,
+            member_name,
+            virtual_name,
+            send_type,
+            history_type,
+            approval_status,
+            amount,
+            wire_transfer_fee,
+            memo,
+            tid,
+            created_at
+        ) VALUES (
+            #{upperAgencyName},
+            #{agencyType},
+            #{agencyId},
+            #{agencyName},
+            #{memberId},
+            #{memberName},
+            #{virtualName},
+            #{sendType},
+            #{historyType},
+            #{approvalStatus},
+            #{amount},
+            #{wireTransferFee},
+            #{memo},
+            #{tid},
+            #{createdAt}
+        )
+    </insert>
 </mapper>

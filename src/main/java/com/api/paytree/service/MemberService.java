@@ -1,14 +1,16 @@
 package com.api.paytree.service;
 
+import com.api.paytree.dto.AgencyDto;
 import com.api.paytree.dto.MemberDto.*;
 import com.api.paytree.exception.ClientException;
+import com.api.paytree.mapper.AgencyMapper;
 import com.api.paytree.mapper.MemberMapper;
-import com.api.paytree.utils.ErrorCode;
-import com.api.paytree.utils.Role;
+import com.api.paytree.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,13 +19,19 @@ public class MemberService {
     @Autowired
     MemberMapper memberMapper;
 
+    @Autowired
+    AgencyMapper agencyMapper;
+
     private static final String ACCOUNT = "account";
+    private static final String SUCCESS = "완료";
+    private static final String SEND = "send_";
+    private static final String RETURN = "return_";
 
     public MemberList getMemberList(Search search) {
         List<Member> memberList;
 
         try {
-            search.setOffset(calculateOffset(search.getPage(), search.getRows()));
+            search.setOffset(Helper.calculateOffset(search.getPage(), search.getRows()));
 
             memberList = Optional.of(memberMapper.getMemberList(search))
                                  .orElseThrow(() -> new ClientException(ErrorCode.SELECT_FAIL));
@@ -60,7 +68,7 @@ public class MemberService {
         List<WalletHistory> walletHistoryList;
 
         try {
-            checkUpdateResult(memberMapper.updateMember(member));
+            Helper.checkUpdateResult(memberMapper.updateMember(member));
 
             MemberHistory memberHistory = MemberHistory.builder()
                                                        .memberId(member.getMemberId())
@@ -70,7 +78,7 @@ public class MemberService {
                                                        .createdAt(LocalDateTime.now())
                                                        .build();
 
-            checkInsertResult(memberMapper.insertMemberHistory(memberHistory));
+            Helper.checkInsertResult(memberMapper.insertMemberHistory(memberHistory));
 
             member = Optional.of(memberMapper.getMemberByMemberId(member.getMemberId()))
                              .orElseThrow(() -> new ClientException(ErrorCode.NOT_FOUNDED_ACCOUNT));
@@ -87,19 +95,144 @@ public class MemberService {
         return new MemberDetail(member, memberHistoryList, walletHistoryList);
     }
 
-    private int calculateOffset(int page, int rows) {
-        return page * rows - rows;
+    public WalletList getMemberWalletList(Search search) {
+        List<Member> memberWalletList;
+
+        try {
+            search.setOffset(Helper.calculateOffset(search.getPage(), search.getRows()));
+
+            memberWalletList = Optional.of(memberMapper.getMemberWalletList(search))
+                                       .orElseThrow(() -> new ClientException(ErrorCode.SELECT_FAIL));
+        } catch (Exception e) {
+            throw new ClientException(ErrorCode.SERVER_ERROR);
+        }
+
+        return new WalletList(memberWalletList);
     }
 
-    private void checkInsertResult(int result) {
-        if (result < 1) {
-            throw new ClientException(ErrorCode.INSERT_FAIL);
+    public SendWallet sendToMemberWallet(SendWallet sendInfo) {
+        try {
+            // [1] agency balance 확인
+            AgencyDto.AgencyDetail agency = Optional.of(agencyMapper.getAgencyDetail(sendInfo.getSendAccountId()))
+                                                    .orElseThrow(() -> new ClientException(ErrorCode.NOT_FOUNDED_AGENCY));
+
+            if (agency.getBalance() < sendInfo.getSendAmount()) {
+                throw new ClientException(ErrorCode.NOT_ENOUGH_BALANCE);
+            }
+
+            Member member = Optional.of(memberMapper.getMemberByMemberId(sendInfo.getReceiveAccountId()))
+                                    .orElseThrow(() -> new ClientException(ErrorCode.NOT_FOUNDED_ACCOUNT));
+
+            // [2] 영업점 잔고 차감
+            Helper.updateAgencyBalance(sendInfo.getSendAccountId(), agency.getBalance() - sendInfo.getSendAmount());
+
+            // [3] 회원 잔액 업데이트
+            Helper.updateMemberBalance(sendInfo.getReceiveAccountId(), member.getBalance() + sendInfo.getSendAmount());
+
+            // [4] 영업점 지갑 히스토리 추가
+            WalletHistory agencyHistory = WalletHistory.builder()
+                                                       .upperAgencyName(agency.getUpperAgencyName())
+                                                       .agencyType(agency.getAgencyType())
+                                                       .agencyId(sendInfo.getSendAccountId())
+                                                       .agencyName(agency.getAgencyName())
+                                                       .virtualName(agency.getVirtualName())
+                                                       .sendType(SendType.INTERNAL_REMITTANCE.getCode())
+                                                       .historyType(HistoryType.WITHDRAW.name())
+                                                       .approvalStatus(SUCCESS)
+                                                       .amount(sendInfo.getSendAmount() * -1)
+                                                       .wireTransferFee(0)
+                                                       .memo(sendInfo.getMemo())
+                                                       .tid(SEND + LocalDateTime.now().format(DateTimeFormatter.ISO_INSTANT))
+                                                       .createdAt(LocalDateTime.now())
+                                                       .build();
+
+            Helper.insertMemberWalletHistory(agencyHistory);
+
+            // [5] 회원 지갑 히스토리 추가
+            WalletHistory memberHistory = WalletHistory.builder()
+                                                       .upperAgencyName(member.getUpperAgencyName())
+                                                       .agencyType(agency.getAgencyType())
+                                                       .agencyId(sendInfo.getSendAccountId())
+                                                       .agencyName(member.getAgencyName())
+                                                       .virtualName(member.getVirtualName())
+                                                       .sendType(SendType.INTERNAL_REMITTANCE.getCode())
+                                                       .historyType(HistoryType.DEPOSIT.name())
+                                                       .approvalStatus(SUCCESS)
+                                                       .amount(sendInfo.getSendAmount())
+                                                       .wireTransferFee(0)
+                                                       .memo(sendInfo.getMemo())
+                                                       .tid(SEND + LocalDateTime.now().format(DateTimeFormatter.ISO_INSTANT))
+                                                       .createdAt(LocalDateTime.now())
+                                                       .build();
+
+            Helper.insertMemberWalletHistory(memberHistory);
+        } catch (Exception e) {
+            throw new ClientException(ErrorCode.SERVER_ERROR);
         }
+
+        return sendInfo;
     }
 
-    private void checkUpdateResult(int result) {
-        if (result < 1) {
-            throw new ClientException(ErrorCode.UPDATE_FAIL);
+    public SendWallet returnToAgencyWallet(SendWallet sendInfo) {
+        try {
+            // [1] member balance 확인
+            Member member = Optional.of(memberMapper.getMemberByMemberId(sendInfo.getSendAccountId()))
+                                    .orElseThrow(() -> new ClientException(ErrorCode.SERVER_ERROR));
+
+            if (member.getBalance() < sendInfo.getSendAmount()) {
+                throw new ClientException(ErrorCode.NOT_ENOUGH_BALANCE);
+            }
+
+            // [2] 회원 잔고 차감
+            Helper.updateMemberBalance(sendInfo.getSendAccountId(), member.getBalance() - sendInfo.getSendAmount());
+
+            // [3] 영업점 잔액 업데이트
+            AgencyDto.AgencyDetail agency = Optional.of(agencyMapper.getAgencyDetail(sendInfo.getSendAccountId()))
+                                                    .orElseThrow(() -> new ClientException(ErrorCode.NOT_FOUNDED_AGENCY));
+
+            Helper.updateAgencyBalance(sendInfo.getReceiveAccountId(), agency.getBalance() + sendInfo.getSendAmount());
+
+            // [4] 회원 지갑 히스토리 추가
+            WalletHistory memberHistory = WalletHistory.builder()
+                                                       .upperAgencyName(member.getUpperAgencyName())
+                                                       .agencyType(agency.getAgencyType())
+                                                       .agencyId(sendInfo.getSendAccountId())
+                                                       .agencyName(member.getAgencyName())
+                                                       .virtualName(member.getVirtualName())
+                                                       .sendType(SendType.INTERNAL_REMITTANCE.getCode())
+                                                       .historyType(HistoryType.WITHDRAW.name())
+                                                       .approvalStatus(SUCCESS)
+                                                       .amount(sendInfo.getSendAmount() * -1)
+                                                       .wireTransferFee(0)
+                                                       .memo(sendInfo.getMemo())
+                                                       .tid(RETURN + LocalDateTime.now().format(DateTimeFormatter.ISO_INSTANT))
+                                                       .createdAt(LocalDateTime.now())
+                                                       .build();
+
+            Helper.insertMemberWalletHistory(memberHistory);
+
+            // [5] 영업점 지갑 히스토리 추가
+            WalletHistory agencyHistory = WalletHistory.builder()
+                                                       .upperAgencyName(agency.getUpperAgencyName())
+                                                       .agencyType(agency.getAgencyType())
+                                                       .agencyId(sendInfo.getSendAccountId())
+                                                       .agencyName(agency.getAgencyName())
+                                                       .virtualName(agency.getVirtualName())
+                                                       .sendType(SendType.INTERNAL_REMITTANCE.getCode())
+                                                       .historyType(HistoryType.DEPOSIT.name())
+                                                       .approvalStatus(SUCCESS)
+                                                       .amount(sendInfo.getSendAmount())
+                                                       .wireTransferFee(0)
+                                                       .memo(sendInfo.getMemo())
+                                                       .tid(RETURN + LocalDateTime.now().format(DateTimeFormatter.ISO_INSTANT))
+                                                       .createdAt(LocalDateTime.now())
+                                                       .build();
+
+            Helper.insertMemberWalletHistory(agencyHistory);
+        } catch (Exception e) {
+            throw new ClientException(ErrorCode.SERVER_ERROR);
         }
+
+        return sendInfo;
     }
 }

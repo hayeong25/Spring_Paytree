@@ -39,4 +39,24 @@ public class MemberController {
     }
 
     // POST : 회원 목록 엑셀 다운로드
+
+    // POST : 회원 지갑 목록
+    @PostMapping("/walletList")
+    public ResponseEntity<WalletList> getMemberWalletList(@RequestBody @Valid Search search) {
+        return ResponseEntity.ok(memberService.getMemberWalletList(search));
+    }
+
+    // POST : 지갑 송금
+    @PostMapping("/send")
+    public ResponseEntity<SendWallet> sendToMemberWallet(@RequestBody @Valid SendWallet sendInfo) {
+        return ResponseEntity.ok(memberService.sendToMemberWallet(sendInfo));
+    }
+
+    // POST : 잔고 회수
+    @PostMapping("/return")
+    public ResponseEntity<SendWallet> returnToAgencyWallet(@RequestBody @Valid SendWallet sendInfo) {
+        return ResponseEntity.ok(memberService.returnToAgencyWallet(sendInfo));
+    }
+
+    // POST : 회원 지갑 목록 엑셀 다운로드
 }

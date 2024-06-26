@@ -18,4 +18,10 @@ public interface MemberMapper {
     int updateMember(Member member);
 
     int insertMemberHistory(MemberHistory history);
+
+    List<Member> getMemberWalletList(Search search);
+
+    int updateMemberBalance(String memberId, int amount);
+
+    int insertMemberWalletHistory(WalletHistory history);
 }

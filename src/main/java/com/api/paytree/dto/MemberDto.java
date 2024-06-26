@@ -48,8 +48,10 @@ public class MemberDto {
         private String bankName;
         private String accountNumber;
         private String accountHolder;
+        private String virtualId;
+        private String virtualName;
         private String virtualAccount;
-        private String balance;
+        private int balance;
         private String socialStatus;
         private String address;
         private LocalDateTime createdAt;
@@ -83,7 +85,14 @@ public class MemberDto {
     }
 
     @Getter
-    @Setter
+    @AllArgsConstructor
+    public static class WalletList {
+        List<Member> memberWalletList;
+    }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
     public static class WalletHistory {
         private String historyNo;
         private String upperAgencyName;
@@ -101,5 +110,17 @@ public class MemberDto {
         private String memo;
         private String tid;
         private LocalDateTime createdAt;
+    }
+
+    @Getter
+    @Setter
+    public static class SendWallet {
+        @NotBlank
+        private String sendAccountId;
+        @NotBlank
+        private String receiveAccountId;
+        @Min(1)
+        private int sendAmount;
+        private String memo;
     }
 }

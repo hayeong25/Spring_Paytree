@@ -1,6 +1,7 @@
 package com.api.paytree.utils;
 
 import com.api.paytree.dto.AgencyDto;
+import com.api.paytree.dto.MemberDto;
 import com.api.paytree.exception.ClientException;
 import com.api.paytree.mapper.AgencyMapper;
 import com.api.paytree.mapper.MemberMapper;
@@ -23,6 +24,10 @@ public class Helper {
 
     public static void insertAgencyWalletHistory(AgencyDto.WalletHistory history) {
         checkInsertResult(agencyMapper.insertAgencyWalletHistory(history));
+    }
+
+    public static void insertMemberWalletHistory(MemberDto.WalletHistory history) {
+        checkInsertResult(memberMapper.insertMemberWalletHistory(history));
     }
 
     public static void checkInsertResult(int result) {
