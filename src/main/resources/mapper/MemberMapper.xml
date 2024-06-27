@@ -177,4 +177,70 @@
             #{createdAt}
         )
     </insert>
+
+    <select id="getWalletHistoryList" parameterType="com.api.paytree.dto.MemberDto$Search" resultType="com.api.paytree.dto.MemberDto$WalletHistory">
+        SELECT upper_agency_id,
+               upper_agency_name,
+               agency_type,
+               agency_id,
+               agency_name,
+               virtual_name,
+               send_type,
+               history_type,
+               approval_status,
+               amount,
+               wire_transfer_fee,
+               memo,
+               tid,
+               created_at
+        FROM TB_VIRTUAL_WALLET_HISTORY
+        WHERE TRUE
+        <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+            AND created_at BETWEEN #{startDate} AND #{endDate}
+        </if>
+        <if test="upperAgencyId != null and upperAgencyId != ''">
+            AND upper_agency_id = #{upperAgencyId}
+        </if>
+        <if test="agencyId != null and agencyId != ''">
+            AND agency_id = #{agencyId}
+        </if>
+        <if test="sendType != null and sendType != ''">
+            AND send_type = #{sendType}
+        </if>
+        <if test="historyType != null and historyType != ''">
+            AND history_type = #{historyType}
+        </if>
+        <if test="approvalStatus != null and approvalStatus != ''">
+            AND approval_status = #{approvalStatus}
+        </if>
+        <choose>
+            <when test="filter == 'accountId'">
+                AND agency_id = #{keyword}
+            </when>
+            <when test="filter == 'accountName'">
+                AND account_name = #{keyword}
+            </when>
+        </choose>
+        ORDER BY history_no DESC
+        LIMIT #{rows} OFFSET #{offset}
+    </select>
+
+    <select id="getWalletHistoryDetail" resultType="com.api.paytree.dto.MemberDto$WalletHistory">
+        SELECT upper_agency_id,
+               upper_agency_name,
+               agency_type,
+               agency_id,
+               agency_name,
+               virtual_name,
+               send_type,
+               history_type,
+               approval_status,
+               amount,
+               wire_transfer_fee,
+               memo,
+               tid,
+               created_at
+        FROM TB_VIRTUAL_WALLET_HISTORY
+        WHERE history_no = #{historyNo}
+    </select>
 </mapper>

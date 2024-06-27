@@ -24,4 +24,8 @@ public interface MemberMapper {
     int updateMemberBalance(String memberId, int amount);
 
     int insertMemberWalletHistory(WalletHistory history);
+
+    List<WalletHistory> getWalletHistoryList(Search search);
+
+    WalletHistory getWalletHistoryDetail(String historyNo);
 }

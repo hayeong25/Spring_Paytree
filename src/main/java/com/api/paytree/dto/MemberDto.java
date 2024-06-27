@@ -1,5 +1,7 @@
 package com.api.paytree.dto;
 
+import com.api.paytree.utils.HistoryType;
+import com.api.paytree.utils.SendType;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -64,6 +66,9 @@ public class MemberDto {
         private String upperAgencyId;
         private String agencyId;
         private int status;
+        private SendType sendType;
+        private HistoryType historyType;
+        private String approvalStatus; // 대기, 완료, 오류, 실패, 취소
         private String filter; // memberId, memberName, phoneNumber
         private String keyword;
         @Min(1)
@@ -91,10 +96,17 @@ public class MemberDto {
     }
 
     @Getter
+    @AllArgsConstructor
+    public static class HistoryList {
+        List<WalletHistory> historyList;
+    }
+
+    @Getter
     @Builder
     @AllArgsConstructor
     public static class WalletHistory {
         private String historyNo;
+        private String upperAgencyId;
         private String upperAgencyName;
         private String agencyType;
         private String agencyId;

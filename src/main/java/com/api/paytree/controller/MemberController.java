@@ -59,4 +59,18 @@ public class MemberController {
     }
 
     // POST : 회원 지갑 목록 엑셀 다운로드
+
+    // POST : 회원 입출금 목록
+    @PostMapping("/historyList")
+    public ResponseEntity<HistoryList> getWalletHistoryList(@RequestBody @Valid Search search) {
+        return ResponseEntity.ok(memberService.getWalletHistoryList(search));
+    }
+
+    // POST : 회원 입출금 상세
+    @PostMapping("/historyDetail")
+    public ResponseEntity<WalletHistory> getWalletHistoryDetail(@RequestParam String historyNo) {
+        return ResponseEntity.ok(memberService.getWalletHistoryDetail(historyNo));
+    }
+
+    // POST : 회원 입출금 목록 엑셀 다운로드
 }
