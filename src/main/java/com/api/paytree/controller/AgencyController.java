@@ -1,6 +1,8 @@
 package com.api.paytree.controller;
 
 import com.api.paytree.dto.AgencyDto.*;
+import com.api.paytree.dto.SearchDto.*;
+import com.api.paytree.dto.WalletDto.*;
 import com.api.paytree.service.AgencyService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,18 +79,6 @@ public class AgencyController {
     }
 
     // POST : 영업점 지갑 목록 엑셀 다운로드
-
-    // POST : 영업점 입출금 목록
-    @PostMapping("/historyList")
-    public ResponseEntity<HistoryList> getWalletHistoryList(@RequestBody @Valid Search search) {
-        return ResponseEntity.ok(agencyService.getWalletHistoryList(search));
-    }
-
-    // POST : 영업점 입출금 상세
-    @PostMapping("/historyDetail")
-    public ResponseEntity<WalletHistory> getWalletHistoryDetail(@RequestParam String historyNo) {
-        return ResponseEntity.ok(agencyService.getWalletHistoryDetail(historyNo));
-    }
 
     // POST : 영업점 입출금 목록 엑셀 다운로드
 }

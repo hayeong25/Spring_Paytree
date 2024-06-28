@@ -1,6 +1,7 @@
 package com.api.paytree.mapper;
 
 import com.api.paytree.dto.AgencyDto.*;
+import com.api.paytree.dto.SearchDto.*;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -28,10 +29,4 @@ public interface AgencyMapper {
     int updateAdminBalance(int amount);
 
     int updateAgencyBalance(String agencyId, int amount);
-
-    int insertAgencyWalletHistory(WalletHistory history);
-
-    List<WalletHistory> getWalletHistoryList(Search search);
-
-    WalletHistory getWalletHistoryDetail(String historyNo);
 }

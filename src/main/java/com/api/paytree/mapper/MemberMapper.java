@@ -1,6 +1,7 @@
 package com.api.paytree.mapper;
 
 import com.api.paytree.dto.MemberDto.*;
+import com.api.paytree.dto.SearchDto.*;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -11,8 +12,6 @@ public interface MemberMapper {
 
     Member getMemberByMemberId(String memberId);
 
-    List<WalletHistory> getMemberWalletHistoryByMemberId(String memberId);
-
     List<MemberHistory> getMemberHistory(String memberId);
 
     int updateMember(Member member);
@@ -22,10 +21,4 @@ public interface MemberMapper {
     List<Member> getMemberWalletList(Search search);
 
     int updateMemberBalance(String memberId, int amount);
-
-    int insertMemberWalletHistory(WalletHistory history);
-
-    List<WalletHistory> getWalletHistoryList(Search search);
-
-    WalletHistory getWalletHistoryDetail(String historyNo);
 }

@@ -1,6 +1,8 @@
 package com.api.paytree.controller;
 
 import com.api.paytree.dto.MemberDto.*;
+import com.api.paytree.dto.SearchDto.*;
+import com.api.paytree.dto.WalletDto;
 import com.api.paytree.service.MemberService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,29 +50,17 @@ public class MemberController {
 
     // POST : 지갑 송금
     @PostMapping("/send")
-    public ResponseEntity<SendWallet> sendToMemberWallet(@RequestBody @Valid SendWallet sendInfo) {
+    public ResponseEntity<WalletDto.SendWallet> sendToMemberWallet(@RequestBody @Valid WalletDto.SendWallet sendInfo) {
         return ResponseEntity.ok(memberService.sendToMemberWallet(sendInfo));
     }
 
     // POST : 잔고 회수
     @PostMapping("/return")
-    public ResponseEntity<SendWallet> returnToAgencyWallet(@RequestBody @Valid SendWallet sendInfo) {
+    public ResponseEntity<WalletDto.SendWallet> returnToAgencyWallet(@RequestBody @Valid WalletDto.SendWallet sendInfo) {
         return ResponseEntity.ok(memberService.returnToAgencyWallet(sendInfo));
     }
 
     // POST : 회원 지갑 목록 엑셀 다운로드
-
-    // POST : 회원 입출금 목록
-    @PostMapping("/historyList")
-    public ResponseEntity<HistoryList> getWalletHistoryList(@RequestBody @Valid Search search) {
-        return ResponseEntity.ok(memberService.getWalletHistoryList(search));
-    }
-
-    // POST : 회원 입출금 상세
-    @PostMapping("/historyDetail")
-    public ResponseEntity<WalletHistory> getWalletHistoryDetail(@RequestParam String historyNo) {
-        return ResponseEntity.ok(memberService.getWalletHistoryDetail(historyNo));
-    }
 
     // POST : 회원 입출금 목록 엑셀 다운로드
 }

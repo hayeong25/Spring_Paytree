@@ -2,10 +2,13 @@ package com.api.paytree.service;
 
 import com.api.paytree.dto.AccountDto.*;
 import com.api.paytree.dto.AgencyDto.*;
+import com.api.paytree.dto.SearchDto.*;
+import com.api.paytree.dto.WalletDto.*;
 import com.api.paytree.exception.ClientException;
 import com.api.paytree.mapper.AccountMapper;
 import com.api.paytree.mapper.AgencyMapper;
 import com.api.paytree.utils.*;
+import com.api.paytree.utils.VirtualAccount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -174,6 +177,7 @@ public class AgencyService {
                                                       .agencyType(HEADQUARTER)
                                                       .agencyId(sendInfo.getSendAccountId())
                                                       .agencyName(COMPANY)
+                                                      .virtualId(VirtualAccount.COOCON.getCode())
                                                       .virtualName(agencyDetail.getVirtualName())
                                                       .sendType(SendType.INTERNAL_REMITTANCE.getCode())
                                                       .historyType(HistoryType.WITHDRAW.name())
@@ -185,13 +189,14 @@ public class AgencyService {
                                                       .createdAt(LocalDateTime.now())
                                                       .build();
 
-            Helper.insertAgencyWalletHistory(adminHistory);
+            Helper.insertWalletHistory(adminHistory);
 
             WalletHistory agencyHistory = WalletHistory.builder()
                                                       .upperAgencyName(agencyDetail.getUpperAgencyName())
                                                       .agencyType(agencyDetail.getAgencyType())
                                                       .agencyId(sendInfo.getSendAccountId())
                                                       .agencyName(agencyDetail.getAgencyName())
+                                                      .virtualId(VirtualAccount.COOCON.getCode())
                                                       .virtualName(agencyDetail.getVirtualName())
                                                       .sendType(SendType.INTERNAL_REMITTANCE.getCode())
                                                       .historyType(HistoryType.DEPOSIT.name())
@@ -203,7 +208,7 @@ public class AgencyService {
                                                       .createdAt(LocalDateTime.now())
                                                       .build();
 
-            Helper.insertAgencyWalletHistory(agencyHistory);
+            Helper.insertWalletHistory(agencyHistory);
         } catch (Exception e) {
             throw new ClientException(ErrorCode.SERVER_ERROR);
         }
@@ -235,6 +240,7 @@ public class AgencyService {
                                                        .agencyType(agencyDetail.getAgencyType())
                                                        .agencyId(sendInfo.getSendAccountId())
                                                        .agencyName(agencyDetail.getAgencyName())
+                                                       .virtualId(VirtualAccount.COOCON.getCode())
                                                        .virtualName(agencyDetail.getVirtualName())
                                                        .sendType(SendType.INTERNAL_REMITTANCE.getCode())
                                                        .historyType(HistoryType.WITHDRAW.name())
@@ -246,13 +252,14 @@ public class AgencyService {
                                                        .createdAt(LocalDateTime.now())
                                                        .build();
 
-            Helper.insertAgencyWalletHistory(agencyHistory);
+            Helper.insertWalletHistory(agencyHistory);
 
             WalletHistory adminHistory = WalletHistory.builder()
                                                       .upperAgencyName(COMPANY)
                                                       .agencyType(HEADQUARTER)
                                                       .agencyId(sendInfo.getSendAccountId())
                                                       .agencyName(COMPANY)
+                                                      .virtualId(VirtualAccount.COOCON.getCode())
                                                       .virtualName(agencyDetail.getVirtualName())
                                                       .sendType(SendType.INTERNAL_REMITTANCE.getCode())
                                                       .historyType(HistoryType.DEPOSIT.name())
@@ -264,39 +271,11 @@ public class AgencyService {
                                                       .createdAt(LocalDateTime.now())
                                                       .build();
 
-            Helper.insertAgencyWalletHistory(adminHistory);
+            Helper.insertWalletHistory(adminHistory);
         } catch (Exception e) {
             throw new ClientException(ErrorCode.SERVER_ERROR);
         }
 
         return sendInfo;
-    }
-
-    public HistoryList getWalletHistoryList(Search search) {
-        List<WalletHistory> historyList;
-
-        try {
-            search.setOffset(Helper.calculateOffset(search.getPage(), search.getRows()));
-
-            historyList = Optional.ofNullable(agencyMapper.getWalletHistoryList(search))
-                                  .orElseThrow(() -> new ClientException(ErrorCode.SELECT_FAIL));
-        } catch (Exception e) {
-            throw new ClientException(ErrorCode.SERVER_ERROR);
-        }
-
-        return new HistoryList(historyList);
-    }
-
-    public WalletHistory getWalletHistoryDetail(String historyNo) {
-        WalletHistory historyDetail;
-
-        try {
-            historyDetail = Optional.of(agencyMapper.getWalletHistoryDetail(historyNo))
-                                    .orElseThrow(() -> new ClientException(ErrorCode.INVALID_PARAMETER));
-        } catch (Exception e) {
-            throw new ClientException(ErrorCode.SERVER_ERROR);
-        }
-
-        return historyDetail;
     }
 }

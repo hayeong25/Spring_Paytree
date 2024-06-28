@@ -1,14 +1,15 @@
 package com.api.paytree.utils;
 
-import com.api.paytree.dto.AgencyDto;
-import com.api.paytree.dto.MemberDto;
+import com.api.paytree.dto.WalletDto;
 import com.api.paytree.exception.ClientException;
 import com.api.paytree.mapper.AgencyMapper;
+import com.api.paytree.mapper.HistoryMapper;
 import com.api.paytree.mapper.MemberMapper;
 
 public class Helper {
     static AgencyMapper agencyMapper;
     static MemberMapper memberMapper;
+    static HistoryMapper historyMapper;
 
     public static void updateAdminBalance(int amount) {
         checkUpdateResult(agencyMapper.updateAdminBalance(amount));
@@ -22,12 +23,8 @@ public class Helper {
         checkUpdateResult(memberMapper.updateMemberBalance(memberId, amount));
     }
 
-    public static void insertAgencyWalletHistory(AgencyDto.WalletHistory history) {
-        checkInsertResult(agencyMapper.insertAgencyWalletHistory(history));
-    }
-
-    public static void insertMemberWalletHistory(MemberDto.WalletHistory history) {
-        checkInsertResult(memberMapper.insertMemberWalletHistory(history));
+    public static void insertWalletHistory(WalletDto.WalletHistory history) {
+        checkInsertResult(historyMapper.insertWalletHistory(history));
     }
 
     public static void checkInsertResult(int result) {
