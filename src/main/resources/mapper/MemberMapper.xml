@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.api.paytree.mapper.MemberMapper">
-    <select id="getMemberList" parameterType="com.api.paytree.dto.MemberDto$Search" resultType="com.api.paytree.dto.MemberDto$Member">
+    <select id="getMemberList" parameterType="com.api.paytree.dto.SearchDto$Search" resultType="com.api.paytree.dto.MemberDto$Member">
         SELECT member_id,
                member_name,
                member_type,
@@ -103,7 +103,7 @@
         )
     </insert>
 
-    <select id="getMemberWalletList" parameterType="com.api.paytree.dto.MemberDto$Search" resultType="com.api.paytree.dto.MemberDto$Member">
+    <select id="getMemberWalletList" parameterType="com.api.paytree.dto.SearchDto$Search" resultType="com.api.paytree.dto.MemberDto$Member">
         SELECT  member_id,
                 member_name,
                 member_type,

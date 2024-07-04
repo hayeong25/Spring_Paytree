@@ -24,7 +24,7 @@
         FROM TB_VIRTUAL_WALLET VW
     </select>
     
-    <select id="getAgencyList" parameterType="com.api.paytree.dto.AgencyDto$Search" resultType="com.api.paytree.dto.AgencyDto$Agency">
+    <select id="getAgencyList" parameterType="com.api.paytree.dto.SearchDto$Search" resultType="com.api.paytree.dto.AgencyDto$Agency">
         SELECT AC.account_id,
                AG.agency_id,
                AG.agency_name,
@@ -226,7 +226,7 @@
         WHERE agency_id = #{agencyId}
     </update>
 
-    <select id="getAgencyWalletList" parameterType="com.api.paytree.dto.AgencyDto$Search" resultType="com.api.paytree.dto.AgencyDto$AgencyDetail">
+    <select id="getAgencyWalletList" parameterType="com.api.paytree.dto.SearchDto$Search" resultType="com.api.paytree.dto.AgencyDto$AgencyDetail">
         SELECT AG.agency_id,
                AG.agency_name,
                AG.agency_type,
