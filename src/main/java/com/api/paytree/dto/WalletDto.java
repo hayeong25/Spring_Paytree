@@ -1,5 +1,6 @@
 package com.api.paytree.dto;
 
+import com.api.paytree.utils.HistoryType;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -44,7 +45,7 @@ public class WalletDto {
         private String virtualId;
         private String virtualName;
         private int sendType; // 수동 입금, 내부 전송, 가상계좌, 은행 바로 출금
-        private String historyType; // 입출금 구분
+        private HistoryType historyType; // 입출금 구분
         private String approvalStatus;
         private int amount;
         private int wireTransferFee;
