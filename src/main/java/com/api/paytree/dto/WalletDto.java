@@ -44,6 +44,9 @@ public class WalletDto {
         private String memberName;
         private String virtualId;
         private String virtualName;
+        private String bankName;
+        private String depositor;
+        private String accountHolder;
         private int sendType; // 수동 입금, 내부 전송, 가상계좌, 은행 바로 출금
         private HistoryType historyType; // 입출금 구분
         private String approvalStatus;

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.api.paytree.mapper.SettlementMapper">
+    <select id="getSettlementList" parameterType="com.api.paytree.dto.SearchDto$Search" resultType="com.api.paytree.dto.SettlementDto$Settlement">
+        SELECT  settlement_id,
+                settlement_date,
+                settlement_status,
+                settlement_type,
+                service_name,
+                virtual_id,
+                upper_agency_id,
+                upper_agency_name,
+                agency_id,
+                agency_name,
+                member_id,
+                member_name,
+                deposit_amount,
+                fee,
+                settlement_amount,
+                created_at,
+                modified_at
+        FROM TB_SETTLEMENT
+        WHERE TRUE
+        <if test="startDate != null and startDate != ''">
+            AND created_at = {startDate}
+        </if>
+        <if test="virtualId != null and virtualId != ''">
+            AND virtual_id = #{virtualId}
+        </if>
+        <if test="settlementStatus != null and settlementStatus != ''">
+            AND settlement_status = #{settlementStatus}
+        </if>
+        <if test="settlementType != null and settlementType != ''">
+            AND settlement_type = #{settlementType}
+        </if>
+        <choose>
+            <when test="agencyId != null and agencyId != ''">
+                AND agency_id = #{agencyId}
+            </when>
+            <when test="agencyName != null and agencyName != ''">
+                AND agency_name = #{agencyName}
+            </when>
+        </choose>
+        LIMIT #{rows} OFFSET #{offset}
+    </select>
+
+    <select id="getSettlementDetail" parameterType="String" resultType="com.api.paytree.dto.SettlementDto$Settlement">
+        SELECT  settlement_id,
+                settlement_date,
+                settlement_status,
+                settlement_type,
+                service_name,
+                virtual_id,
+                upper_agency_id,
+                upper_agency_name,
+                agency_id,
+                agency_name,
+                member_id,
+                member_name,
+                deposit_amount,
+                fee,
+                settlement_amount,
+                created_at,
+                modified_at
+        FROM TB_SETTLEMENT
+        WHERE settlement_id = #{settlementId}
+    </select>
+
+    <update id="updateSettlementStatus">
+        UPDATE TB_SETTLEMENT
+        SET settlement_status = #{settlementStatus},
+            modified_at = NOW()
+        WHERE settlement_id = #{settlementId}
+    </update>
+</mapper>

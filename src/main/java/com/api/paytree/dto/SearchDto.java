@@ -2,6 +2,8 @@ package com.api.paytree.dto;
 
 import com.api.paytree.utils.HistoryType;
 import com.api.paytree.utils.SendType;
+import com.api.paytree.utils.SettlementStatus;
+import com.api.paytree.utils.SettlementType;
 import jakarta.validation.constraints.Min;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,6 +23,8 @@ public class SearchDto {
         private HistoryType historyType;
         private int status;
         private int approvalStatus; // 대기, 완료, 오류, 실패, 취소
+        private SettlementStatus settlementStatus; // 대기, 보류, 완료
+        private SettlementType settlementType; // 지갑, 은행
         private String filter; // agencyId, agencyName, serviceName, agencyPhoneNumber, memberId, memberName, memberPhoneNumber
         private String keyword;
         @Min(1)

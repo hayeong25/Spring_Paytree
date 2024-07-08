@@ -11,6 +11,7 @@
 
     <insert id="insertWalletHistory">
         INSERT INTO TB_VIRTUAL_WALLET_HISTORY (
+            upper_agency_id,
             upper_agency_name,
             agency_type,
             agency_id,

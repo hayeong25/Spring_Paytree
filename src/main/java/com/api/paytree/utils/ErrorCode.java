@@ -35,7 +35,10 @@ public enum ErrorCode {
     UNAUTHORIZED_REQUEST(HttpStatus.UNAUTHORIZED, "C1003", "비정상적인 접근입니다. 로그인 후 이용해주세요."),
     FORBIDDEN_REQUEST(HttpStatus.FORBIDDEN, "C1004", "접근 권한이 없습니다."),
 
-    INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "C2001", "요청 파라미터 값을 다시 확인해주세요."),
+    NOT_FOUNDED_SETTLEMENT(HttpStatus.NOT_FOUND, "C2001", "정산 정보를 찾을 수 없습니다."),
+    FORBIDDEN_SETTLEMENT(HttpStatus.FORBIDDEN, "C2002", "정산 상태를 변경할 수 없습니다."),
+
+    INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "C3001", "요청 파라미터 값을 다시 확인해주세요."),
 
     SELECT_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "D0001", "데이터 조회 실패"),
     INSERT_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "D0002", "데이터 저장 실패"),
