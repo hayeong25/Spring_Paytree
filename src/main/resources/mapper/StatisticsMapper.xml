@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.api.paytree.mapper.StatisticsMapper">
+    <select id="getMonthlyStatistics" parameterType="String" resultType="com.api.paytree.dto.StatisticsDto$Statistics">
+        SELECT  date,
+                upper_agency_count,
+                agency_count,
+                member_count,
+                pass_count,
+                kakao_count,
+                talk_count,
+                withdraw_count
+        FROM TB_STATISTICS
+        WHERE date LIKE CONCAT(#{targetDate}, '%')
+    </select>
+</mapper>
