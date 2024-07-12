@@ -25,7 +25,7 @@ public class SearchDto {
         private int approvalStatus; // 대기, 완료, 오류, 실패, 취소
         private SettlementStatus settlementStatus; // 대기, 보류, 완료
         private SettlementType settlementType; // 지갑, 은행
-        private String filter; // agencyId, agencyName, serviceName, agencyPhoneNumber, memberId, memberName, memberPhoneNumber
+        private String filter; // agencyId, agencyName, serviceName, agencyPhoneNumber, memberId, memberName, memberPhoneNumber, virtualId, virtualName
         private String keyword;
         @Min(1)
         private int page;

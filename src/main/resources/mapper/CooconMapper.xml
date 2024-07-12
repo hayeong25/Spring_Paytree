@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.api.paytree.mapper.CooconMapper">
+    <select id="getCooconList" parameterType="com.api.paytree.dto.SearchDto$Search" resultType="com.api.paytree.dto.CooconDto$Coocon">
+        SELECT  type,
+                virtual_name,
+                virtual_id,
+                withdraw_fee,
+                use_yn,
+                created_at
+        FROM TB_COOCON
+        WHERE TRUE
+        <if test="status != null and status != ''">
+            AND use_yn = #{status}
+        </if>
+        <choose>
+            <when test="filter == 'virtualId">
+                AND virtual_id = #{virtualId}
+            </when>
+            <when test="filter == 'virtualName'">
+                AND virtual_name = #{virtualName}
+            </when>
+        </choose>
+        LIMIT #{rows} OFFSET #{offset}
+    </select>
+
+    <select id="getCooconDetail" parameterType="String" resultType="com.api.paytree.dto.CooconDto$Coocon">
+        SELECT  type,
+                virtual_name,
+                virtual_id,
+                virtual_account,
+                balance,
+                deposit_fee,
+                withdraw_fee,
+                use_yn,
+                created_at
+        FROM TB_COOCON
+        WHERE virtual_id = #{virtualId}
+    </select>
+
+    <select id="getBulkList" parameterType="String" resultType="com.api.paytree.dto.CooconDto$Bulk">
+        SELECT  virtual_id,
+                virtual_account,
+                member_name,
+                created_at
+        FROM TB_BULK
+        WHERE virtual_id = #{virtualId}
+    </select>
+</mapper>
